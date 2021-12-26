@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Task5.Models.User>
+@{
+    ViewBag.Title = "Все пользователи";
+}
+<button class="btn btn-warning block">Block</button>
+<button class="btn btn-success unblock">Unblock</button>
+<button class="btn btn-danger delete">Delete</button>
+<table class="table">
+    <tr>
+        <th>
+            <input type="checkbox" class="select-all checkbox" name="select-all" />Выделить всё/Снять выделение
+        </th>
+        <th>ID</th>
+        <th>Имя</th>
+        <th>E-mail</th>
+        <th>Дата регистрации</th>
+        <th>Дата последного логина</th>
+        <th>Статус</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <input type="checkbox" class="select-item checkbox" name="select-item" value="@item.Id" />
+            </td>
+            <td>@item.Id</td>
+            <td>@item.Name</td>
+            <td nowrap>@item.Email</td>
+            <td>@item.CreatedDate</td>
+            <td>@item.LastLoginDate</td>
+            @if(item.Status == true)
+            {<td>Unblock</td>}
+            else
+            {<td>Block</td>}
+        </tr>
+    }
+</table>
+
+
+
+

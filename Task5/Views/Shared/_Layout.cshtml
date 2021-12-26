@@ -1,0 +1,122 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Task5</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Task5</a>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav flex-grow-2">
+                    @if(User.Identity.IsAuthenticated)
+                    {
+                         
+                        <li class="nav-item">
+                            <p  class="nav-link text-dark" >Hello @User.Identity.Name</p>
+                        </li>
+                        <li class="nav-item">
+                            <a type="button" class="btn btn-warning" asp-action="Logout" asp-controller="Account">Logout</a>   
+                        </li>
+                    }
+                    else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-action="Register" asp-controller="Account">Register</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-action="Login" asp-controller="Account">Login</a>
+    </li>
+}
+</ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - Task5 
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+    $(function(){
+        var listitem = []
+        $("input.select-all").click(function () {
+            var checked = this.checked;
+            listitem = []
+            $("input.select-item").each(function (index,item) {
+                item.checked = checked;
+                if (item.checked == true){
+                listitem.push(Number(item.value))
+                }
+                else{
+                    var indexitem = listitem.indexOf(Number(item.value))
+                    listitem.splice(indexitem,1)
+                }
+            });
+        });
+        $("input.select-item").click(function () {
+            var checked = this.checked;
+            if (checked == true){
+                listitem.push(Number(this.value))
+            }
+            else{
+                var indexitem = listitem.indexOf(Number(this.value))
+                listitem.splice(indexitem,1)
+            }
+            console.log(listitem)
+            checkSelected()
+        });
+        function checkSelected() {
+            var all = $("input.select-all")[0];
+            var total = $("input.select-item").length;
+            var len = $("input.select-item:checked:checked").length;
+            all.checked = len===total;
+        };
+        $(".btn").click(function(){
+            if(this.className == 'btn btn-danger delete')
+            {
+                ajaxoutput("@Url.Action("Delete", "Account")")
+            }
+            else if(this.className == 'btn btn-success unblock')
+            {
+                ajaxoutput("@Url.Action("Unblock", "Account")")
+            }
+            else if(this.className == 'btn btn-warning block')
+            {
+                ajaxoutput("@Url.Action("Block", "Account")")
+            }
+        })
+        function ajaxoutput(urlitem) {
+            $.ajax({
+                type: "POST",
+                url: urlitem,
+                data:{ items: listitem },
+                success: function(result){
+                    if(result){location.reload();}
+                    else{alert("Failed!")}
+                }
+            })
+        }
+    });
+</script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
